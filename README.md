@@ -1,88 +1,160 @@
-# 🏗 Scaffold-ETH 2
+# Take2Save
 
-<h4 align="center">
-  <a href="https://docs.scaffoldeth.io">Documentation</a> |
-  <a href="https://scaffoldeth.io">Website</a>
-</h4>
+Take2Save is a decentralized platform that enables secure product purchases with a built-in scoring and certification system. It allows customers to rate their shopping experiences across multiple metrics (quality, speed, attention) and retailers to earn certifications based on their performance.
 
-🧪 An open-source, up-to-date toolkit for building decentralized applications (dapps) on the Ethereum blockchain. It's designed to make it easier for developers to create and deploy smart contracts and build user interfaces that interact with those contracts.
+## Features
 
-⚙️ Built using NextJS, RainbowKit, Foundry/Hardhat, Wagmi, Viem, and Typescript.
+- **Tokenized Payments**: Native dollar-pegged token for transactions
+- **Product Management**: Retailers can list and manage product inventories
+- **Customer Scoring System**: Multi-metric feedback system including:
+  - Quality scores
+  - Speed of service scores
+  - Attention to customer scores
+- **Performance Certifications**: NFT-based certifications for retailers achieving high scores
+- **Transparent Feedback**: On-chain verification of customer experiences
 
-- ✅ **Contract Hot Reload**: Your frontend auto-adapts to your smart contract as you edit it.
-- 🪝 **[Custom hooks](https://docs.scaffoldeth.io/hooks/)**: Collection of React hooks wrapper around [wagmi](https://wagmi.sh/) to simplify interactions with smart contracts with typescript autocompletion.
-- 🧱 [**Components**](https://docs.scaffoldeth.io/components/): Collection of common web3 components to quickly build your frontend.
-- 🔥 **Burner Wallet & Local Faucet**: Quickly test your application with a burner wallet and local faucet.
-- 🔐 **Integration with Wallet Providers**: Connect to different wallet providers and interact with the Ethereum network.
+## Smart Contracts
 
-![Debug Contracts tab](https://github.com/scaffold-eth/scaffold-eth-2/assets/55535804/b237af0c-5027-4849-a5c1-2e31495cccb1)
+### Core Contracts
 
-## Requirements
+1. **Dollar.sol**
+   - ERC20 token for platform payments
+   - Pegged to USD for stable pricing
 
-Before you begin, you need to install the following tools:
+2. **Product.sol**
+   - ERC721 token for product listings
+   - Handles product inventory and purchases
+   - Tracks ownership and usage status
 
-- [Node (>= v18.18)](https://nodejs.org/en/download/)
-- Yarn ([v1](https://classic.yarnpkg.com/en/docs/install/) or [v2+](https://yarnpkg.com/getting-started/install))
-- [Git](https://git-scm.com/downloads)
+3. **Score.sol**
+   - Manages the scoring system
+   - Links products, customers, and ratings
+   - Distributes score tokens to retailers
 
-## Quickstart
+4. **Certification.sol**
+   - ERC721 token for retailer certifications
+   - Issues achievement-based certificates
+   - IPFS integration for certificate metadata
 
-To get started with Scaffold-ETH 2, follow the steps below:
+### Token Contracts
 
-1. Install the latest version of Scaffold-ETH 2
+- **Quality.sol**: ERC20 token for quality scores
+- **Speed.sol**: ERC20 token for speed scores
+- **Attention.sol**: ERC20 token for customer attention scores
 
+## Getting Started
+
+### Prerequisites
+
+- Node.js >= 18.18.0
+- Yarn >= 3.2.3
+- Git
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/Take2save.git
+cd Take2save
 ```
-npx create-eth@latest
+
+2. Install dependencies:
+```bash
+yarn install
 ```
 
-This command will install all the necessary packages and dependencies, so it might take a while.
-
-> [!NOTE]
-> You can also initialize your project with one of our extensions to add specific features or starter-kits. Learn more in our [extensions documentation](https://docs.scaffoldeth.io/extensions/).
-
-2. Run a local network in the first terminal:
-
+3. Set up your environment:
+```bash
+cp packages/hardhat/.env.example packages/hardhat/.env
+cp packages/nextjs/.env.example packages/nextjs/.env
 ```
+
+### Development Setup
+
+1. Start the local Hardhat network:
+```bash
 yarn chain
 ```
 
-This command starts a local Ethereum network that runs on your local machine and can be used for testing and development. Learn how to [customize your network configuration](https://docs.scaffoldeth.io/quick-start/environment#1-initialize-a-local-blockchain).
-
-3. On a second terminal, deploy the test contract:
-
-```
+2. Deploy the contracts:
+```bash
 yarn deploy
 ```
 
-This command deploys a test smart contract to the local network. You can find more information about how to customize your contract and deployment script in our [documentation](https://docs.scaffoldeth.io/quick-start/environment#2-deploy-your-smart-contract).
-
-4. On a third terminal, start your NextJS app:
-
-```
+3. Start the frontend:
+```bash
 yarn start
 ```
 
-Visit your app on: `http://localhost:3000`. You can interact with your smart contract using the `Debug Contracts` page. You can tweak the app config in `packages/nextjs/scaffold.config.ts`.
+### Testing
 
-**What's next**:
+Run the test suite:
+```bash
+cd packages/hardhat
+npx hardhat test
+```
 
-Visit the [What's next section of our docs](https://docs.scaffoldeth.io/quick-start/environment#whats-next) to learn how to:
+## Project Structure
 
-- Edit your smart contracts
-- Edit your deployment scripts
-- Customize your frontend
-- Edit the app config
-- Writing and running tests
-- [Setting up external services and API keys](https://docs.scaffoldeth.io/deploying/deploy-smart-contracts#configuration-of-third-party-services-for-production-grade-apps)
+```
+Take2save/
+├── packages/
+│   ├── hardhat/
+│   │   ├── contracts/        # Smart contracts
+│   │   ├── deploy/          # Deployment scripts
+│   │   └── test/            # Contract tests
+│   └── nextjs/
+│       ├── components/      # React components
+│       ├── pages/          # Next.js pages
+│       └── hooks/          # Custom React hooks
+```
 
-## Documentation
+## Contract Interactions
 
-Visit our [docs](https://docs.scaffoldeth.io) to learn all the technical details and guides of Scaffold-ETH 2.
+### Core Flow
 
-To know more about its features, check out our [website](https://scaffoldeth.io).
+1. Retailers list products using the Product contract
+2. Customers purchase products using Dollar tokens
+3. After using products, customers provide scores
+4. Retailers accumulate score tokens based on ratings
+5. High-performing retailers can claim certification NFTs
 
-## Contributing to Scaffold-ETH 2
+### Scoring System
 
-We welcome contributions to Scaffold-ETH 2!
+- Each purchase can be rated on three metrics:
+  - Quality (0-10)
+  - Speed (0-10)
+  - Attention (0-10)
+- Minimum score of 10 tokens required for certification
+- Scores are permanently recorded on-chain
 
-Please see [CONTRIBUTING.MD](https://github.com/scaffold-eth/scaffold-eth-2/blob/main/CONTRIBUTING.md) for more information and guidelines for contributing to Scaffold-ETH 2.
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch: `git checkout -b feature/my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/my-new-feature`
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Security
+
+- Smart contracts are open source and can be audited
+- Use discretion when interacting with unaudited contracts
+- Report security vulnerabilities to security@take2save.com
+
+## Support
+
+For support and inquiries:
+- Open an issue on GitHub
+- Join our Discord community
+- Email: support@take2save.com
+
+## Acknowledgments
+
+- OpenZeppelin for smart contract libraries
+- Scaffold-ETH for initial development framework
+- The Ethereum community for continuous inspiration
