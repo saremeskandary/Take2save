@@ -1,3 +1,5 @@
+"use client";
+
 import { useStoreState } from "~~/stores/useStoreState";
 
 const FavoritesPage = () => {
