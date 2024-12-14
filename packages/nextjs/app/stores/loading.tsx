@@ -1,5 +1,5 @@
 const StoreSkeleton = () => (
-  <div className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
+  <div className="bg-base-100 rounded-lg shadow-md overflow-hidden animate-pulse">
     <div className="h-48 bg-gray-200" />
     <div className="p-4">
       <div className="h-4 bg-gray-200 rounded w-3/4 mb-4" />

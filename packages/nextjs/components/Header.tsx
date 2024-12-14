@@ -71,7 +71,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky lg:static top-0 navbar bg-white min-h-0 flex-shrink-0 justify-between z-20 shadow-md px-0 sm:px-2">
+    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md px-0 sm:px-2">
       <div className="navbar-start w-auto lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
@@ -97,8 +97,8 @@ export const Header = () => {
         </div>
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
           <div className="flex flex-col">
-            <span className="font-bold text-xl text-orange-500">Food to Save</span>
-            <span className="text-xs text-gray-600">Save food, save money</span>
+            <span className="font-bold text-xl text-orange-500">Take 2 Save</span>
+            <span className="text-xs text-base-content">Save food, save money</span>
           </div>
         </Link>
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">

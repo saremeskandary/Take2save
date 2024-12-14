@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 
@@ -6,10 +8,10 @@ export default function StoreDetailError() {
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center p-6 bg-white rounded-lg shadow-lg max-w-sm mx-auto">
+      <div className="text-center p-6 bg-base-100 rounded-lg shadow-lg max-w-sm mx-auto">
         <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-gray-800 mb-2">Store Not Found</h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-base-content mb-6">
           We couldn't find the store you're looking for. It may have been removed or the link might be incorrect.
         </p>
         <div className="space-y-2">

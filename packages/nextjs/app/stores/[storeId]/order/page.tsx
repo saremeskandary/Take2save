@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Clock, CreditCard, MapPin, Wallet } from "lucide-react";
@@ -17,18 +19,18 @@ export default function OrderPage() {
   return (
     <div className="max-w-2xl mx-auto pb-32">
       {/* Order Header */}
-      <div className="bg-white p-4 shadow-sm mb-4">
+      <div className="bg-base-100 p-4 shadow-sm mb-4">
         <h1 className="text-xl font-bold">Order Review</h1>
       </div>
 
-      {/* Bag Details */}
-      <div className="bg-white p-4 mb-4">
+      {/* Order Items */}
+      <div className="bg-base-100 p-4 mb-4">
         <h2 className="font-semibold mb-3">Your Bag</h2>
         <div className="border rounded-lg p-3">
           <div className="flex justify-between">
             <div>
               <p className="font-medium">1x Panificação - MISTA</p>
-              <p className="text-sm text-gray-600">Mista surpresa para consumo imediato</p>
+              <p className="text-sm text-base-content">Mista surpresa para consumo imediato</p>
             </div>
             <span className="font-semibold">R$ 23,22</span>
           </div>
@@ -36,7 +38,7 @@ export default function OrderPage() {
       </div>
 
       {/* Delivery Method */}
-      <div className="bg-white p-4 mb-4">
+      <div className="bg-base-100 p-4 mb-4">
         <h2 className="font-semibold mb-3">Delivery Method</h2>
         <div className="space-y-2">
           <button
@@ -50,7 +52,7 @@ export default function OrderPage() {
                 <MapPin className="h-5 w-5 text-orange-500" />
                 <div className="text-left">
                   <p className="font-medium">Store Pickup</p>
-                  <p className="text-sm text-gray-600">Today • 09:00 - 20:00</p>
+                  <p className="text-sm text-base-content">Today • 09:00 - 20:00</p>
                 </div>
               </div>
               <span className="font-medium text-green-600">Free</span>
@@ -68,7 +70,7 @@ export default function OrderPage() {
                 <Clock className="h-5 w-5 text-orange-500" />
                 <div className="text-left">
                   <p className="font-medium">Home Delivery</p>
-                  <p className="text-sm text-gray-600">30-45 min</p>
+                  <p className="text-sm text-base-content">30-45 min</p>
                 </div>
               </div>
               <span className="font-medium">R$ 5,99</span>
@@ -78,7 +80,7 @@ export default function OrderPage() {
       </div>
 
       {/* Payment Method */}
-      <div className="bg-white p-4 mb-4">
+      <div className="bg-base-100 p-4 mb-4">
         <h2 className="font-semibold mb-3">Payment Method</h2>
         <div className="space-y-2">
           <button
@@ -107,8 +109,8 @@ export default function OrderPage() {
         </div>
       </div>
 
-      {/* Order Summary */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-4">
+      {/* Order Total and Submit */}
+      <div className="fixed bottom-0 left-0 right-0 bg-base-100 border-t border-gray-200 p-4">
         <div className="max-w-2xl mx-auto">
           <div className="flex justify-between mb-4">
             <span className="font-medium">Total:</span>
