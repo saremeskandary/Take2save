@@ -1,4 +1,5 @@
-import { Store } from "./StoreList";
+import { Store } from "~~/types/store";
+
 
 export const DUMMY_STORES: Store[] = [
   {
