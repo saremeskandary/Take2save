@@ -60,6 +60,10 @@ const config: HardhatUserConfig = {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
     },
+    zksync: {
+      url: "https://zksync2-testnet.zksync.dev", // Replace with the zkSync mainnet URL if needed
+      accounts: [deployerPrivateKey],
+    },
     sepolia: {
       url: `https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
