@@ -17,18 +17,29 @@ export const useProducts = (storeId: string) => {
     contractName: "Product",
   });
 
-  // Correctly type the contract write hook
   const { writeContractAsync, isMining } = useScaffoldWriteContract("Product");
 
   const getProducts = async (): Promise<ProductStruct[]> => {
     if (!productContract) return [];
-
     try {
-      const productsOfOwner = await productContract.read.productsOdOwner([storeId]);
-      return (productsOfOwner as ProductStruct[]).map((product, index) => ({
-        ...product,
-        productId: index,
-      }));
+      // First get the product from read.products
+      const product = await productContract.read.products([BigInt(0)]);
+
+      if (!product) return [];
+
+      // Convert the product tuple to a ProductStruct
+      const productStruct: ProductStruct = {
+        price: product[0],
+        quantity: product[1],
+        retailAddr: product[2],
+        name: product[3],
+        image: product[4],
+        description: product[5],
+        used: product[6],
+        productId: 0,
+      };
+
+      return [productStruct];
     } catch (error) {
       console.error("Error fetching products:", error);
       return [];
@@ -37,7 +48,6 @@ export const useProducts = (storeId: string) => {
 
   const createOrder = async (productId: number, quantity: number) => {
     try {
-      // Use the correct function name and arguments structure
       const tx = await writeContractAsync({
         functionName: "safeMint",
         args: [BigInt(productId), BigInt(quantity)],
@@ -51,11 +61,19 @@ export const useProducts = (storeId: string) => {
 
   const getProductDetails = async (productId: number): Promise<ProductStruct | null> => {
     if (!productContract) return null;
-
     try {
       const product = await productContract.read.products([BigInt(productId)]);
+
+      if (!product) return null;
+
       return {
-        ...(product as ProductStruct),
+        price: product[0],
+        quantity: product[1],
+        retailAddr: product[2],
+        name: product[3],
+        image: product[4],
+        description: product[5],
+        used: product[6],
         productId,
       };
     } catch (error) {
