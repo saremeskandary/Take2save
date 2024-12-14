@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: MIT
-// Compatible with OpenZeppelin Contracts ^5.0.0
 pragma solidity ^0.8.22;
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
@@ -8,48 +7,87 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
+/**
+ * @title Certification NFT Contract
+ * @dev ERC721 token representing certifications in the Take2Save system
+ * @custom:security-contact security@take2save.com
+ */
 contract Certification is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
     uint256 private _nextTokenId;
+    
+    /// @notice Minimum score required to mint a certification
     uint constant public MIN_SCORE = 10;
-
+    
+    /// @notice Mapping of certification types to their IPFS CIDs
     mapping (string => string) public kind;
+    
+    /// @notice Mapping of certification types to their score token contracts
     mapping (string => IERC20) public scoreContract;
 
+    /**
+     * @dev Constructor initializes the NFT collection
+     */
     constructor()
         ERC721("Certification", "CERT")
         Ownable(msg.sender)
     {}
 
-    function setKind(string calldata _qualityCID,string calldata _attentionCID,string calldata _speedCID) external onlyOwner {
+    /**
+     * @notice Sets the CIDs for different certification types
+     * @param _qualityCID IPFS CID for quality certification metadata
+     * @param _attentionCID IPFS CID for attention certification metadata
+     * @param _speedCID IPFS CID for speed certification metadata
+     */
+    function setKind(
+        string calldata _qualityCID,
+        string calldata _attentionCID,
+        string calldata _speedCID
+    ) external onlyOwner {
         kind["qualityCID"] = _qualityCID;
         kind["attentionCID"] = _attentionCID;
         kind["speedCID"] = _speedCID;
     }
 
-    function setContracts(IERC20 _speedContract,IERC20 _qualContract, IERC20 _atteContract) external onlyOwner {
+    /**
+     * @notice Sets the score token contracts for different certification types
+     * @param _speedContract Address of speed token contract
+     * @param _qualContract Address of quality token contract
+     * @param _atteContract Address of attention token contract
+     */
+    function setContracts(
+        IERC20 _speedContract,
+        IERC20 _qualContract, 
+        IERC20 _atteContract
+    ) external onlyOwner {
         scoreContract["qualityCID"] = _qualContract;
         scoreContract["attentionCID"] = _atteContract;
         scoreContract["speedCID"] = _speedContract;
     }
 
+    /**
+     * @notice Returns the base URI for token metadata
+     * @return string Base URI (IPFS)
+     */
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://";
     }
 
+    /**
+     * @notice Mints a new certification NFT
+     * @param _scoreKind Type of certification to mint
+     */
     function safeMint(string memory _scoreKind) public {
         IERC20 _scoreContract = scoreContract[_scoreKind];
         string memory uri = kind[_scoreKind];
         address to = msg.sender;
-
+        
         _scoreContract.transferFrom(msg.sender, address(this), MIN_SCORE);
-
         uint256 tokenId = _nextTokenId++;
         _safeMint(to, tokenId);
         _setTokenURI(tokenId, uri);
     }
 
-    // The following functions are overrides required by Solidity.
-
+    // Required overrides for multiple inheritance
     function _update(address to, uint256 tokenId, address auth)
         internal
         override(ERC721, ERC721Enumerable)
