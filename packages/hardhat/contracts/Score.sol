@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 /**
  * @title Score Contract
- * @dev Manages scoring and token distribution for retailer performance metrics
+ * @dev Manages scoring and tokens (speed, score and attention) distribution for retailer performance metrics
  * @custom:security-contact security@take2save.com
  */
 contract Score is Ownable {

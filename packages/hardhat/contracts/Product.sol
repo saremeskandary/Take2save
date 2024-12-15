@@ -68,7 +68,7 @@ contract Product is ERC721, ERC721Enumerable, Ownable {
     }
 
     /**
-     * @notice Mints product NFT(s) to buyer after payment
+     * @notice Mints product NFT(s) to buyer after payment. this is for createing product. create product
      * @param _idOfProduct ID of product to purchase
      * @param _quantity Number of items to purchase
      */
