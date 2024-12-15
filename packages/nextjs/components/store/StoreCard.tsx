@@ -4,7 +4,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 // Import useRouter for navigation
 import { HeartIcon, MapPinIcon, StarIcon } from "lucide-react";
-import { Store } from "~~/types/store";
+import { Store } from "~~/schemas/storeSchema";
 
 type StoreCardProps = {
   store: Store;
@@ -25,7 +25,7 @@ const StoreCard: React.FC<StoreCardProps> = ({ store, isFavorite, toggleFavorite
       <div className="relative h-48">
         <img src={store.image} alt={store.name} className="w-full h-full object-cover" />
         <button
-          onClick={() => toggleFavorite(store.id)}
+          onClick={() => toggleFavorite(String(store.id))}
           className="absolute top-2 right-2 p-2 rounded-full bg-secondary shadow-md"
         >
           <HeartIcon className={`h-6 w-6 ${isFavorite ? "text-red-500 fill-red-500" : "text-base-content"}`} />

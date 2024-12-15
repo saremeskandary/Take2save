@@ -41,7 +41,7 @@ const StoreList: React.FC = () => {
           <StoreCard
             key={store.id}
             store={store}
-            isFavorite={favorites.has(store.id)}
+            isFavorite={favorites.has(String(store.id))}
             toggleFavorite={toggleFavorite}
           />
         ))}

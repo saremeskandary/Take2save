@@ -2,150 +2,127 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { AlertTriangle, Clock, MapPin, StarIcon } from "lucide-react";
-import { ProductStruct, useProducts } from "~~/hooks/useProducts";
+import { ArrowLeft, Clock, MapPin, Star } from "lucide-react";
+import { DUMMY_STORES } from "~~/components/store/DUMMY_STORES";
+import { useProducts } from "~~/hooks/useProducts";
 import { notification } from "~~/utils/scaffold-eth";
+import { Store } from "~~/schemas/storeSchema";
 
-export default function StoreDetailPage({ params }: { params: { storeId: string } }) {
+export default function StoreDetailsPage({ params }: { params: { storeId: string } }) {
   const router = useRouter();
-  const [selectedBag, setSelectedBag] = useState<ProductStruct | null>(null);
-  const [showSurpriseModal, setShowSurpriseModal] = useState(false);
-  const [products, setProducts] = useState<ProductStruct[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [isOrdering, setIsOrdering] = useState(false);
-
-  const { getProducts, createOrder, isLoading } = useProducts(params.storeId);
+  const [store, setStore] = useState<Store | undefined>();
+  const { getProducts, isLoading } = useProducts(params.storeId);
+  const [products, setProducts] = useState<any[]>([]);
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    // Find store by matching either string or number ID
+    const foundStore = DUMMY_STORES.find(s => String(s.id) === String(params.storeId));
+    console.log("Looking for store:", {
+      requestedId: params.storeId,
+      availableStores: DUMMY_STORES.map(s => ({ id: s.id, name: s.name })),
+      foundStore,
+    });
+
+    setStore(foundStore);
+
+    if (!foundStore) {
+      notification.error("Store not found!");
+      return;
+    }
+
+    const loadProducts = async () => {
       try {
         const fetchedProducts = await getProducts();
         setProducts(fetchedProducts);
       } catch (error) {
-        notification.error("Error loading products");
-        console.error(error);
-      } finally {
-        setLoading(false);
+        console.error("Error loading products:", error);
+        notification.error("Failed to load products");
       }
     };
-    fetchProducts();
-  }, [getProducts]);
 
-  const handleBagSelect = (bag: ProductStruct) => {
-    setSelectedBag(bag);
-    setShowSurpriseModal(true);
-  };
+    loadProducts();
+  }, [params.storeId, getProducts]);
 
-  const handleConfirmBag = async () => {
-    if (!selectedBag || selectedBag.productId === undefined) return;
-
-    setIsOrdering(true);
-    try {
-      const tx = await createOrder(selectedBag.productId, 1);
-      notification.success(
-        <div className="flex flex-col">
-          <span>Order created successfully!</span>
-          <span className="text-sm">Transaction: {tx}</span>
-        </div>,
-      );
-      setShowSurpriseModal(false);
-      router.push(`/stores/${params.storeId}/order`);
-    } catch (error: any) {
-      notification.error(error?.message || "Failed to create order");
-    } finally {
-      setIsOrdering(false);
-    }
-  };
-
-  if (loading || isLoading) {
+  if (!store) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center p-6 bg-base-100 rounded-lg shadow-lg max-w-sm mx-auto">
+          <h2 className="text-2xl font-bold mb-2">Store Not Found</h2>
+          <p className="text-base-content mb-6">
+            We couldn't find the store you're looking for. It may have been removed or the link might be incorrect.
+          </p>
+          <button onClick={() => router.push("/stores")} className="btn btn-primary">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Stores
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto pb-20">
+    <div className="max-w-2xl mx-auto p-4">
       {/* Store Header */}
-      {/* Surprise Modal */}
-      {showSurpriseModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-end md:items-center justify-center p-4 z-50">
-          <div className="bg-base-100 rounded-t-3xl md:rounded-3xl p-6 w-full max-w-lg">
-            <h3 className="text-xl font-bold mb-4">Surprise Bag Details</h3>
-            {selectedBag && (
-              <>
-                <div className="space-y-4 mb-6">
-                  <div className="flex items-start gap-3">
-                    <Clock className="h-5 w-5 text-orange-500 mt-1" />
-                    <div>
-                      <h4 className="font-medium">Pickup Time</h4>
-                      <p className="text-base-content">09:00 - 20:00</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <MapPin className="h-5 w-5 text-orange-500 mt-1" />
-                    <div>
-                      <h4 className="font-medium">Pickup Location</h4>
-                      <p className="text-base-content">{selectedBag.name}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <AlertTriangle className="h-5 w-5 text-orange-500 mt-1" />
-                    <div>
-                      <h4 className="font-medium">Important Note</h4>
-                      <p className="text-base-content">
-                        The contents of this bag are a surprise. While we can't guarantee specific items, we ensure
-                        quality and value.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-lg font-medium">Price:</span>
-                  <span className="text-2xl font-bold">R$ {(Number(selectedBag.price) / 100).toFixed(2)}</span>
-                </div>
-              </>
-            )}
-            <div className="flex gap-2">
-              <button
-                onClick={() => setShowSurpriseModal(false)}
-                className="flex-1 py-2 px-4 border border-gray-300 rounded-full"
-                disabled={isOrdering}
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmBag}
-                disabled={isOrdering}
-                className="flex-1 py-2 px-4 bg-orange-500 text-white rounded-full hover:bg-orange-600 flex items-center justify-center gap-2"
-              >
-                {isOrdering ? (
-                  <>
-                    <span className="loading loading-spinner loading-sm"></span>
-                    <span>Confirming...</span>
-                  </>
-                ) : (
-                  "Got it!"
-                )}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Product List */}
-      {products.length > 0 && (
-        <div className="fixed bottom-20 left-0 right-0 p-4 bg-base-100 border-t border-gray-200">
+      <div className="bg-base-100 rounded-lg shadow-lg overflow-hidden mb-6">
+        <div className="relative h-48">
+          <img src={store.image} alt={store.name} className="w-full h-full object-cover" />
           <button
-            className="w-full bg-orange-500 text-white py-3 rounded-full font-semibold hover:bg-orange-600 transition-colors disabled:bg-gray-400"
-            onClick={() => handleBagSelect(products[0])}
-            disabled={isOrdering}
+            onClick={() => router.push("/stores")}
+            className="absolute top-4 left-4 btn btn-circle btn-sm bg-base-100"
           >
-            {isOrdering ? "Processing..." : "Order Now"}
+            <ArrowLeft className="w-4 h-4" />
           </button>
         </div>
-      )}
+        <div className="p-4">
+          <h1 className="text-2xl font-bold mb-2">{store.name}</h1>
+          <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center">
+              <Star className="w-5 h-5 text-yellow-400" />
+              <span className="ml-1">{store.rating}</span>
+            </div>
+            <span>({store.reviews} reviews)</span>
+          </div>
+          <div className="flex items-center gap-4 text-base-content/80">
+            <div className="flex items-center gap-1">
+              <MapPin className="w-4 h-4" />
+              <span>{store.distance}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Clock className="w-4 h-4" />
+              <span>Until {store.availableUntil}</span>
+            </div>
+          </div>
+          <p className="mt-2 text-base-content/70">{store.address}</p>
+        </div>
+      </div>
+
+      {/* Products Section */}
+      <div className="space-y-4">
+        <h2 className="text-xl font-bold">Available Products</h2>
+        {isLoading ? (
+          <div className="flex justify-center">
+            <span className="loading loading-spinner loading-lg"></span>
+          </div>
+        ) : products.length > 0 ? (
+          <div className="grid gap-4">
+            {products.map((product, index) => (
+              <div key={index} className="bg-base-100 rounded-lg shadow p-4">
+                <div className="flex gap-4">
+                  <img src={product.image} alt={product.name} className="w-24 h-24 object-cover rounded-lg" />
+                  <div>
+                    <h3 className="font-bold">{product.name}</h3>
+                    <p className="text-sm text-base-content/70">{product.description}</p>
+                    <p className="mt-2 font-bold">Price: ${Number(product.price) / 100}</p>
+                    <p className="text-sm">Available: {product.quantity.toString()}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-center py-8 text-base-content/70">No products available at this time</p>
+        )}
+      </div>
     </div>
   );
 }
